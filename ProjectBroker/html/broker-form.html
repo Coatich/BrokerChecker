@@ -1,0 +1,46 @@
+<div class="modal fade" id="brokerModal" tabindex="-1" aria-labelledby="brokerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="brokerForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="brokerModalLabel">Broker Info</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="mc" id="brokerMc">
+
+          <div class="mb-3">
+            <label for="setupStatus" class="form-label">Setup Status</label>
+            <select class="form-select" name="setup_status" id="setupStatus">
+              <option value="Setup completed">Setup completed</option>
+              <option value="Not setup">Not setup</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="approvedOur" class="form-label">Approved by Us</label>
+            <select class="form-select" name="approved_our_status" id="approvedOur">
+              <option value="Approved">Approved</option>
+              <option value="Not approved">Not approved</option>
+              <option value="No info">No info</option>
+            </select>
+            <input class="form-control mt-2 d-none" name="unapproved_reason_our" id="unapprovedReasonOur" placeholder="Reason if not approved...">
+          </div>
+
+          <div class="mb-3">
+            <label for="approvedTheir" class="form-label">Approved by Them</label>
+            <select class="form-select" name="approved_their_status" id="approvedTheir">
+              <option value="Approved">Approved</option>
+              <option value="Not approved">Not approved</option>
+              <option value="No info">No info</option>
+            </select>
+            <input class="form-control mt-2 d-none" name="unapproved_reason_their" id="unapprovedReasonTheir" placeholder="Reason if not approved...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

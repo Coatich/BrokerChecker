@@ -1,0 +1,22 @@
+***Broker Checker za dispecere***
+
+System Requirements (Server)
+Baza podataka sa 2 tabele (za sad), od toga jedna (Komentar) ima dosta kolona. Preporuka za ogranicenje do 10 komentara po ID-u, radi manjih zahteva skladistenja.
+Logika izbora cuvanja komentara TBD
+
+System Requirements (Client)
+Krompir, po mogucnosti beli jer bolje provodi struju od crvenog, kabal za napajanje 220V, viljuska
+Ako je pri ruci (mada moze samo i krompir) - specifikacije su ispod
+CPU: Intel i386 Gen1 ili slicno
+GPU: Nvidia GeForce 256 ili slicno
+RAM: TBD
+
+Brainstorm
+    Interni sistem ocenjivanja
+    Pregled svih Loadova sa brokerom - WIP
+    Reasons
+
+
+WIP Demo by Aleksandar Petrovic
+(ChatGPT je pomogao za povezivanje API-a)
+

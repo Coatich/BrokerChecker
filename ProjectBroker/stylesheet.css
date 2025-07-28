@@ -1,0 +1,15 @@
+body {
+  padding-bottom: 150px; /* da footer ne preseče dropdown */
+}
+
+#resultsTable {
+  min-height: 80vh; /* povećaj prostor ispod tabele */
+}
+.dropdown-menu {
+  overflow: visible;
+  z-index: 1055; /* više od modala */
+}
+#table-wrapper{
+  min-height: 80vh; /* ili više */
+  overflow: visible; /* ako je bilo overflow: hidden ili scroll */
+}
