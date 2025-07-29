@@ -15,16 +15,16 @@
               <label for="setupStatus" class="form-label">Setup Status</label>
               <select class="form-select" id="setupStatus" name="setup_status" required>
                 <option value="">Select</option>
-                <option value="Setup completed">Setup completed</option>
-                <option value="Not setup">Not setup</option>
+                <option value="1">Setup completed</option>
+                <option value="0">Not setup</option>
               </select>
             </div>
             <div class="col-md-6">
               <label for="approvedOurStatus" class="form-label">Approved (Our side)</label>
               <select class="form-select" id="approvedOurStatus" name="approved_our_status" required>
                 <option value="">Select</option>
-                <option value="Approved">Approved</option>
-                <option value="Not approved">Not approved</option>
+                <option value="1">Approved</option>
+                <option value="0">Not approved</option>
               </select>
               <input type="text" class="form-control mt-2 d-none" id="unapprovedReasonOur" name="unapproved_reason_our" placeholder="Reason for not approving (Our)">
             </div>
@@ -35,13 +35,13 @@
               <label for="approvedTheirStatus" class="form-label">Approved (Their side)</label>
               <select class="form-select" id="approvedTheirStatus" name="approved_their_status" required>
                 <option value="">Select</option>
-                <option value="Approved">Approved</option>
-                <option value="Not approved">Not approved</option>
+                <option value="1">Approved</option>
+                <option value="0">Not approved</option>
               </select>
               <input type="text" class="form-control mt-2 d-none" id="unapprovedReasonTheir" name="unapproved_reason_their" placeholder="Reason for not approving (Their)">
             </div>
             <div class="col-md-6">
-              <label for="additionalNotes" class="form-label">Additional Notes</label>
+              <label for="additionalNotes" class="form-label">General Broker Note (visible to all users)</label>
               <textarea class="form-control" id="additionalNotes" name="notes" rows="3"></textarea>
             </div>
           </div>

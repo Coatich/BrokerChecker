@@ -1,66 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
+
   const brokerModalEl = document.getElementById('brokerModal');
-  const brokerModal = new bootstrap.Modal(brokerModalEl);
   const brokerForm = document.getElementById('brokerForm');
+  const brokerModal = brokerModalEl ? new bootstrap.Modal(brokerModalEl) : null;
+  const approvedOurStatus = document.getElementById('approvedOurStatus');
+  const approvedTheirStatus = document.getElementById('approvedTheirStatus');
 
   const showHideReason = (selectEl, reasonInputId) => {
     document.getElementById(reasonInputId).classList.toggle(
       'd-none',
-      selectEl.value !== 'Not approved'
+      selectEl.value !== '0'
     );
   };
-    const approvedOur = document.getElementById('approvedOurStatus');
-    const approvedTheir = document.getElementById('approvedTheirStatus');
 
-    console.log('approvedOur:', document.getElementById('approvedOur'));
-    console.log('approvedTheir:', document.getElementById('approvedTheir'));
-
-
-    if (approvedOur && approvedTheir) {
-        approvedOur.addEventListener('change', e => {
-        showHideReason(e.target, 'unapprovedReasonOur');
+  if (approvedOurStatus && approvedTheirStatus) {
+    approvedOurStatus.addEventListener('change', e => {
+      showHideReason(e.target, 'unapprovedReasonOur');
     });
-        approvedTheir.addEventListener('change', e => {
-        showHideReason(e.target, 'unapprovedReasonTheir');
+    approvedTheirStatus.addEventListener('change', e => {
+      showHideReason(e.target, 'unapprovedReasonTheir');
     });
-    } else {
-        console.warn('Jedan ili oba elementa za odobrenje brokera nisu pronađena.');
-    }
-  // Funkcija za otvaranje modala sa podacima
-  async function openBrokerModal({ mc, dot, ime, setup_status, approved_our_status, approved_their_status }) {
+  } else {
+    console.warn('Elementi approvedOurStatus ili approvedTheirStatus nisu pronađeni u DOM-u.');
+  }
+
+  async function openBrokerModal({ mc }) {
     if (!mc) return;
 
-    if (!ime && !dot && !setup_status && !approved_our_status && !approved_their_status) {
-      // Ako nema dodatnih podataka, resetuj formu i stavi MC
-      brokerForm.reset();
-      document.getElementById('brokerMc').value = mc;
-      brokerModal.show();
-      return;
-    }
-    window.openBrokerModal = openBrokerModal;
-    // U suprotnom, fetchuj podatke za edit
+    // Reset form and set MC before fetch
+    brokerForm.reset();
+    document.getElementById('brokerMc').value = mc;
+
     try {
-      const res = await fetch('php/search.php?mc=' + mc);
+      const res = await fetch('php/search.php?mc=' + encodeURIComponent(mc));
       const data = await res.json();
-      if (!data.success) return alert('Error loading broker');
+      if (!data.success) {
+        brokerModal.show();
+        return;
+      }
 
-      document.getElementById('brokerMc').value = data.broker.mc;
-      document.getElementById('setupStatus').value = data.broker.setup_status;
-      document.getElementById('approvedOur').value = data.broker.approved_our_status;
-      document.getElementById('approvedTheir').value = data.broker.approved_their_status;
-      document.getElementById('unapprovedReasonOur').value = data.broker.unapproved_reason_our || "";
-      document.getElementById('unapprovedReasonTheir').value = data.broker.unapproved_reason_their || "";
+      const broker = data.broker;
+      document.getElementById('setupStatus').value = broker.setup_status != null ? String(broker.setup_status) : '';
+      approvedOurStatus.value = broker.approved_our_status != null ? String(broker.approved_our_status) : '';
+      approvedTheirStatus.value = broker.approved_their_status != null ? String(broker.approved_their_status) : '';
+      document.getElementById('unapprovedReasonOur').value = broker.unapproved_reason_our || '';
+      document.getElementById('unapprovedReasonTheir').value = broker.unapproved_reason_their || '';
+      document.getElementById('additionalNotes').value = broker.general_comment || '';
 
-      showHideReason(document.getElementById('approvedOur'), 'unapprovedReasonOur');
-      showHideReason(document.getElementById('approvedTheir'), 'unapprovedReasonTheir');
+      showHideReason(approvedOurStatus, 'unapprovedReasonOur');
+      showHideReason(approvedTheirStatus, 'unapprovedReasonTheir');
 
       brokerModal.show();
     } catch (err) {
       alert('Failed to load broker data.');
+      brokerModal.show();
     }
   }
 
-  document.getElementById('resultsTable').addEventListener('click', async e => {
+  // Eksportuj funkciju globalno da je search.js može pozvati
+  window.openBrokerModal = openBrokerModal;
+
+  // Klikovi na dugmad u tabeli za add/edit
+  document.getElementById('resultsTable').addEventListener('click', e => {
     const btn = e.target.closest('button');
     if (!btn) return;
 
@@ -68,42 +69,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const action = btn.dataset.action;
     if (!mc || !action) return;
 
-    if (action === 'add-broker') {
-      openBrokerModal({ mc });
-    } else if (action === 'edit-broker') {
+    if (action === 'add-broker' || action === 'edit-broker') {
       openBrokerModal({ mc });
     }
   });
 
-  ['approvedOur', 'approvedTheir'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener('change', e => {
-      const inputId = id === 'approvedOur' ? 'unapprovedReasonOur' : 'unapprovedReasonTheir';
-      showHideReason(e.target, inputId);
-    });
-  } else {
-    console.warn(`Element sa id=${id} nije pronađen u DOM-u.`);
-  }
-});
-
-
+  // Slanje forme
   brokerForm.addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(brokerForm);
+    const notes = document.getElementById('additionalNotes').value.trim();
+    const mc = document.getElementById('brokerMc').value;
+    // Get selected user from navbar
+    const korisnikSelect = document.querySelector('nav select[name="korisnik"]');
+    const added_by_user = korisnikSelect ? korisnikSelect.value : '';
 
-    const res = await fetch('php/save_broker.php', {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await res.json();
-    if (result.success) {
-      brokerModal.hide();
-      alert("Broker saved.");
-      document.getElementById('searchForm').dispatchEvent(new Event('submit')); // refresh results
-    } else {
-      alert(result.error || "Error saving broker");
+    try {
+      const res = await fetch('php/save_broker.php', {
+        method: 'POST',
+        body: formData
+      });
+      const result = await res.json();
+      if (result.success) {
+        // If notes are filled, submit as general comment
+        if (notes) {
+          await fetch('php/add_comment.php', {
+            method: 'POST',
+            headers: { },
+            body: new URLSearchParams({
+              mc,
+              comment_text: notes,
+              is_general: 1,
+              added_by_user
+            })
+          });
+        }
+        brokerModal.hide();
+        alert('Broker uspešno sačuvan.');
+        document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+      } else {
+        alert(result.error || 'Greška pri čuvanju brokera.');
+      }
+    } catch (error) {
+      alert('Greška u komunikaciji sa serverom.');
     }
   });
 });

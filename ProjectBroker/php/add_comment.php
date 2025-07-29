@@ -12,11 +12,15 @@ if (!$mc || !$comment_text || !$added_by_user) {
     exit;
 }
 
-// Ubaci komentar u bazu
 try {
+    if ($is_general) {
+        // Delete old general comment for this broker
+        $del = $pdo->prepare("DELETE FROM comment WHERE mc = ? AND is_general = 1");
+        $del->execute([$mc]);
+    }
     $stmt = $pdo->prepare("INSERT INTO comment (mc, comment_text, is_general, added_by_user, created_at) VALUES (?, ?, ?, ?, NOW())");
     $stmt->execute([$mc, $comment_text, $is_general, $added_by_user]);
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => 'Greška prilikom unosa komentara.']);
+    echo json_encode(['success' => false, 'error' => 'DB error: ' . $e->getMessage()]);
 }

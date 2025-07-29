@@ -35,11 +35,7 @@
 <?php include 'html/comment-modal.html'; ?>
 <?php include 'html/broker-modal.html'; ?>
 
-<!-- JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-<script src="js/broker-form.js"></script>
-<script src="js/comments.js"></script>
-<script src="js/search.js"></script>
+
 
 <footer class="text-center py-3 mt-4" style="background-color: #f0f0f0; color: #333; position: fixed; width: 100%; bottom: 0; left: 0;">
   <div>
@@ -49,6 +45,12 @@
     Made by Aleksandar Petrovic
   </div>
 </footer>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="js/broker-form.js"></script>
+<script src="js/comments.js"></script>
+<script src="js/search.js"></script>
 
 </body>
 

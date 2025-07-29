@@ -10,11 +10,26 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // Helper: fill form from URL params
+  function fillFormFromParams(params) {
+    for (const [key, value] of params.entries()) {
+      const el = searchForm.elements[key];
+      if (el) el.value = value;
+    }
+  }
+
+  // On submit, update URL and fetch
   searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const formData = new FormData(this);
     const query = new URLSearchParams(formData).toString();
+
+    // Update URL without reloading
+    if (window.history.replaceState) {
+      const newUrl = window.location.pathname + (query ? '?' + query : '');
+      window.history.replaceState({}, '', newUrl);
+    }
 
     fetch("php/search.php?" + query)
       .then(res => res.json())
@@ -38,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdownOptions = `
               <li><button class="dropdown-item edit-broker-btn" data-mc="${item.mc}">Edit broker</button></li>
               <li><button class="dropdown-item view-comments-btn" data-mc="${item.mc}">View Comments</button></li>
-              <li><button class="dropdown-item book-load-btn" data-mc="${item.mc}">Book a load</button></li>`;
+              <li><a class="dropdown-item book-load-btn" href="html/loads.html?mc=${item.mc}" target="_blank">Book a load</a></li>`;
           }
 
           let rowClass = "";
@@ -52,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <td>${item.mc}</td>
               <td>${item.dot}</td>
               <td>${item.ime}</td>
-              <td>${item.setup_status === "Setup completed" ? "Yes" : "No"}</td>
+              <td>${item.setup_status}</td>
               <td>${item.approved_status === "Approved" ? "Yes" : (item.approved_status === "No info" ? "No Info" : "No")}</td>
               <td>${item.updated_at}</td>
               <td>${item.general_comment || "No General Comment"}</td>
@@ -89,12 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
           });
         });
-
-        // Povećaj visinu wrappera da dropdown ne ide ispod
-        document.getElementById('table-wrapper').style.minHeight = '70vh';
       });
   
   });
+
+  // On page load: if URL has params, fill form and auto-submit
+  const urlParams = new URLSearchParams(window.location.search);
+  if ([...urlParams.keys()].length > 0) {
+    fillFormFromParams(urlParams);
+    searchForm.dispatchEvent(new Event('submit'));
+  }
 
   // Delegacija klikova na dugmad u tabeli
   resultsTable.addEventListener('click', function (e) {
